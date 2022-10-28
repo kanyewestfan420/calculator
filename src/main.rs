@@ -4,7 +4,6 @@ use eframe::egui;
 use egui::{RichText, FontId, Vec2};
 use f64;
 use cpython::{Python, PyDict, PyResult, PyErr};
-use std::error::Error;
 
 fn main() {
     let options = eframe::NativeOptions {
