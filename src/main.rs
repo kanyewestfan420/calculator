@@ -1,9 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 use eframe::egui;
-use egui::{RichText, FontId, Vec2};
+use egui::{FontId, Vec2};
 use f64;
-use cpython::{Python, PyDict, PyResult, PyErr};
+use cpython::{Python, PyErr};
 
 fn main() {
     let options = eframe::NativeOptions {
