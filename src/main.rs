@@ -55,7 +55,6 @@ impl MyApp {
                         self.ans = true;
                         return;
                     }
-                    self.expression = self.expression.trim_start_matches(c).to_string();
                 }
                 
                 let val = match evalexpr::eval(&self.expression) {
