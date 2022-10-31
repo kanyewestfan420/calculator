@@ -3,7 +3,7 @@
 use eframe::egui;
 use egui::{FontId, Vec2};
 use f64;
-use cpython::{Python, PyErr};
+use evalexpr;
 
 fn main() {
     let options = eframe::NativeOptions {
@@ -31,7 +31,6 @@ impl MyApp {
             self.ans = false;
         }
 
-        println!("{}", &self.expression);
         match val.as_str() {
             "C" => {
                 self.expression = "".to_string();
@@ -42,7 +41,6 @@ impl MyApp {
                     return;
                 }
                 self.expression = self.expression.replace("÷", "/").replace("x", "*");
-                let gil = Python::acquire_gil();
                 for c in ["*", "-", "+"] {
                     if self.expression.chars().last().unwrap().to_string() == c {
                         self.expression = "Syntax error!".to_string();
@@ -60,26 +58,19 @@ impl MyApp {
                     self.expression = self.expression.trim_start_matches(c).to_string();
                 }
                 
-                let val = {
-                if self.expression.contains("/") || self.expression.contains(".") {
-                    match eval_float(gil.python(), &self.expression) {
-                        Ok(val) => {
-                            val.to_string()
-                        }
-                        _ => {
-                            "Error".to_string()
-                        }
+                let val = match evalexpr::eval(&self.expression) {
+                    Ok(val) => {
+                        val.to_string()
                     }
-                } else {
-                    match eval(gil.python(), &self.expression) {
-                        Ok(val) => {
-                            val.to_string()
-                        } 
-                        _ => {
-                            "Error".to_string()
-                        }
-                }}};
-
+                    Err(_) => {
+                        "Error".to_string()
+                    }
+                };
+                
+                if val == "Error" {
+                    self.expression = val;
+                    return;
+                }
                 match exp {
                     "=" => {
                         self.expression = val;
@@ -106,18 +97,6 @@ impl Default for MyApp {
             ans: false
         }
     }
-}
-
-fn eval(py: Python, exp: &String) -> Result<i64, PyErr> {
-    let val = py.eval(&exp, None, None)?;
-    println!("Val: {}", val);
-    val.extract(py)
-}
-
-fn eval_float(py: Python, exp: &String) -> Result<f64, PyErr> {
-    let val = py.eval(&exp, None, None)?;
-    println!("Val: {}", val);
-    val.extract(py)
 }
 
 impl eframe::App for MyApp {

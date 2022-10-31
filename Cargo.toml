@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 egui = "0.19.0"
 eframe = "0.19.0"
-cpython = "0.7"
+evalexpr = "8.1.0"
